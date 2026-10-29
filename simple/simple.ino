@@ -37,6 +37,7 @@ ProtomatterStatus status; // Kept so loop() can keep reporting it
 
 const int HEART_THRESHOLD = 60;
 const int HEART_RUNTIME = 30;
+const int LANTERN_RUNTIME = 30;
 int tick; //ticks since the last reset of the loop
 
 uint8_t brightness = 64; // 0 (off) to 255 (full), applied on the next draw
@@ -89,11 +90,17 @@ void loop(void) {
   Serial.println(frames * 1000 / max(now - lastMillis, (uint32_t)1));
   lastMillis = now;
 
-  if (tick > HEART_THRESHOLD + HEART_RUNTIME) {
+  if (tick > HEART_THRESHOLD + HEART_RUNTIME + LANTERN_RUNTIME) {
     tick = 0;
   }
 
-  draw(tick > HEART_THRESHOLD ? LANTERN : FLAG, tick - HEART_THRESHOLD);
+  Drawing type = FLAG;
+  if (tick > HEART_THRESHOLD && tick < HEART_THRESHOLD + HEART_RUNTIME) {
+      type = HEART;
+  } else if (tick >= HEART_THRESHOLD + HEART_RUNTIME && tick < HEART_THRESHOLD + HEART_RUNTIME + LANTERN_RUNTIME) {
+      type = LANTERN;
+  }
+  draw(type, tick - HEART_THRESHOLD);
   tick++;
 
   delay(100);
@@ -183,10 +190,10 @@ void drawShield(bool overlay) {
 void drawJackOLantern(void) {
   const uint16_t palette[] = {
       0,                       // 0: off
-      dimColor(255, 100, 0),   // 1: orange body
-      dimColor(150, 50, 0),    // 2: darker orange ribs
+      dimColor(255, 90, 0),    // 1: deep orange body
+      dimColor(200, 40, 0),    // 2: near-red ribs
       dimColor(0, 150, 0),     // 3: green stem
-      dimColor(255, 220, 0),   // 4: glowing face
+      matrix.color565(255, 200, 40), // 4: glowing face, never dimmed
   };
   const int rows = sizeof(jackOLantern) / sizeof(jackOLantern[0]);
   const int cols = sizeof(jackOLantern[0]) / sizeof(jackOLantern[0][0]);

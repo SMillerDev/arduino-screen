@@ -27,12 +27,6 @@ The shield fixes the wiring:
 
 In Protomatter's constructor the width is **32**, not 64.
 
-## Sketches
-
-| Sketch | Purpose |
-|---|---|
-| `simple/` | Adafruit's Protomatter "simple" example with Minima pins. Draws shapes, text and colour ramps (laid out for 64×32, so it's cramped on 32×32). Prints the begin status and refresh FPS every second. |
-
 ## Building and uploading
 
 With `arduino-cli`, using the `Makefile`:
@@ -108,8 +102,3 @@ these changes.** Keep a copy of the two `renesas.*` files.
   is now about 200 ns (10 NOPs per edge).
 - **`delayMicroseconds()` is a busy-wait** on this core
   (`R_BSP_SoftwareDelay`), so it's safe inside the ISR, just slow.
-
-## Ideas
-
-- Rework `simple`'s drawing for a 32×32 panel.
-- Offer the RA4M1 port upstream to Adafruit as a pull request.
